@@ -32,6 +32,7 @@ void root() {
     "</head>"
     "<body><h1>30A Smart Plug</h1>"
     "<p>Current State: %s</p> %s"
+    "<br><br><p><a href=\"/configure\">Change Settings</a></p>"
     "</body></html>",
     state ? "ON" : "OFF",
     ( state
@@ -167,9 +168,9 @@ void setup() {
     Serial.print("Connecting to ");
     Serial.print(SSID);
     WiFi.begin(SSID.c_str(), PWD.c_str()); 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 150; i++) {
       Serial.print(".");
-      delay(500);
+      delay(100);
       if (WiFi.status() == WL_CONNECTED)  break;
     }
 
@@ -202,9 +203,16 @@ void setup() {
     
     Serial.print("IP address: ");
     Serial.println(WiFi.softAPIP());
-
-    server.on("/", HTTP_GET, configure);  
-    server.on("/", HTTP_POST, configure); 
+  
+    server.on("/", root);     
+    server.on("/on", turnOn);   
+    server.on("/off", turnOff);   
+    
+    server.on("/api", HTTP_GET, api);  
+    server.on("/api", HTTP_POST, api); 
+    
+    server.on("/configure", HTTP_GET, configure);  
+    server.on("/configure", HTTP_POST, configure); 
   }
           
   server.begin();     
