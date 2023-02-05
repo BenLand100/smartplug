@@ -30,7 +30,7 @@ void root() {
     ".buttonoff { background-color: #FF0000; border: none; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer; }"
     "</style>"
     "</head>"
-    "<body><h1>30A Smart Switch</h1>"
+    "<body><h1>30A Smart Plug</h1>"
     "<p>Current State: %s</p> %s"
     "</body></html>",
     state ? "ON" : "OFF",
@@ -99,7 +99,7 @@ void configure() {
       "html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center; }"
       "</style>"
       "</head>"
-      "<body><h1>30A Smart Switch</h1>"
+      "<body><h1>30A Smart Plug</h1>"
       "<p>WiFi Configuration</p>"
       "<form action=\"/configure\" method=\"post\">"
       "<label for=\"fname\">Network SSID:</label><br>"
@@ -129,7 +129,7 @@ void configure() {
         "html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center; }"
         "</style>"
         "</head>"
-        "<body><h1>30A Smart Switch</h1>"
+        "<body><h1>30A Smart Plug</h1>"
         "<p>WiFi configuration saved!</p>"
         "<p>Reconnect after device reboots.</p>"
         "</body></html>"
@@ -198,7 +198,7 @@ void setup() {
     
     Serial.println("Dropping into AP mode for configuration.");
     
-    WiFi.softAP("30AmpSwitch", "30AmpSwitch");
+    WiFi.softAP("30AmpPlug", "30AmpPlug");
     
     Serial.print("IP address: ");
     Serial.println(WiFi.softAPIP());
