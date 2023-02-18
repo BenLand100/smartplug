@@ -3,6 +3,7 @@
 #include <WebServer.h>
 #include <Preferences.h>
 
+#define TOGGLE 14
 #define RELAY 12
 #define STATUS 2
 Preferences prefs;
@@ -12,6 +13,8 @@ WebServer server(80);
 char buffer[4096];
 bool configured;
 bool state;
+bool toggle_low;
+uint64_t last_change;
 
 #define ENTRY digitalWrite(STATUS, configured ? HIGH : LOW);
 #define EXIT digitalWrite(STATUS, configured ? LOW : HIGH);
@@ -43,11 +46,19 @@ void root() {
   EXIT
 }
 
+void _on() {
+  digitalWrite(RELAY, HIGH);
+  state = true;  
+}
+
+void _off() {
+  digitalWrite(RELAY, LOW);
+  state = false;
+}
 
 void turnOn() {
   ENTRY
-  digitalWrite(RELAY, HIGH);
-  state = true;  
+  _on();
   server.sendHeader("Location", "/", true);  
   server.send(302, "text/plain", "");
   EXIT
@@ -55,8 +66,7 @@ void turnOn() {
 
 void turnOff() {
   ENTRY
-  digitalWrite(RELAY, LOW);
-  state = false;
+  _off();
   server.sendHeader("Location", "/", true);  
   server.send(302, "text/plain", "");
   EXIT
@@ -149,6 +159,10 @@ void configure() {
 
 void setup() {     
   Serial.begin(115200); 
+  
+  pinMode(TOGGLE, INPUT_PULLUP);
+  toggle_low = false;
+  last_change = esp_timer_get_time();
 
   pinMode(STATUS, OUTPUT);
   digitalWrite(STATUS, HIGH);
@@ -218,7 +232,23 @@ void setup() {
   server.begin();     
    
 }    
-       
+
 void loop() {    
   server.handleClient();
+  int t = digitalRead(TOGGLE);
+  if (t == HIGH) {
+    toggle_low = false;
+  } else if (!toggle_low) {
+    uint64_t now = esp_timer_get_time();
+    if (now-last_change >= 100000) { //100ms
+      last_change = now;\';. 
+      toggle_low = true;
+      if (state) {
+        _off();
+      } else {
+        _on();
+      }
+      
+    }
+  }
 }
