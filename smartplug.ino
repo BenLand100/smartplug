@@ -241,7 +241,7 @@ void loop() {
   } else if (!toggle_low) {
     uint64_t now = esp_timer_get_time();
     if (now-last_change >= 100000) { //100ms
-      last_change = now;\';. 
+      last_change = now;
       toggle_low = true;
       if (state) {
         _off();
